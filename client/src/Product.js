@@ -32,6 +32,7 @@ class Product extends Component {
 
   render() {
     const { product } = this.state;
+    let label = `Buy $${product.price}`
 
     return (
       <div className="col-lg-4 col-md-6 text-center">
@@ -43,14 +44,21 @@ class Product extends Component {
           </div>
           <div className="card-footer foot bg-transparent border-white text-center">
             <StripeCheckout
-              className="btn-pay"
               stripeKey="pk_test_rfd3VcwMOkTLRKTflveHdIfg00dYj8zDDC"
               token={this.handleToken}
               amount={product.price * 100}
               name={product.name}
+              description={product.description}
+              image="./favicon.ico"
+              ComponentClass="div"
+              label={label}
               billingAddress
               shippingAddress
-            />
+            >
+              <button className="btn btn-primary">
+                {label}
+              </button>
+            </StripeCheckout>
           </div>
         </div>
       </div>

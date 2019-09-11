@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const path = require('path');
 
 const key = require('./config/keys').secretKey;
 
 const stripe = require('stripe')(key);
-const uuid = require("uuid/v4");
+const uuid = require("uuid/v4");   // To prevent user from double payment
 
 const app = express();
 
@@ -63,6 +64,16 @@ app.post("/checkout", async (req, res) => {
 
   res.json({ error, status });
 });
+
+// Server static assets if in production
+if (process.env.NODE_ENV === 'production') {
+  //Set status folder
+  app.use(express.static('client/build'));
+
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'client', 'build', 'index.html'));
+  });
+}
 
 const port = process.env.PORT || 5000;
 
