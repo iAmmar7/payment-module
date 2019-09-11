@@ -4,6 +4,7 @@ const bodyParser = require('body-parser');
 const key = require('./config/keys').secretKey;
 
 const stripe = require('stripe')(key);
+const uuid = require("uuid/v4");
 
 const app = express();
 
@@ -15,11 +16,11 @@ app.get('/', (req, res) => {
   res.send("Testing Route")
 })
 
-app.post('/checkout', async (req, res) => {
+app.post("/checkout", async (req, res) => {
   console.log("Request: " + req.body);
 
-  let error, status;
-
+  let error;
+  let status;
   try {
     const { product, token } = req.body;
 
@@ -28,32 +29,40 @@ app.post('/checkout', async (req, res) => {
       source: token.id
     });
 
-    const charge = await stripe.charges.create({
-      amount: product.price * 100,
-      currency: "usd",
-      receipt_email: token.email,
-      description: `Purchased product is ${product.name}`,
-      shipping: {
-        name: token.card.name,
-        address: {
-          line1: token.card.address_line1,
-          line2: token.card.address_line2,
-          city: token.card.address_city,
-          postal_code: token.card.address_zip
+    const idempotency_key = uuid();
+    const charge = await stripe.charges.create(
+      {
+        amount: product.price * 100,
+        currency: "usd",
+        customer: customer.id,
+        receipt_email: token.email,
+        description: `Purchased the ${product.name}`,
+        shipping: {
+          name: token.card.name,
+          address: {
+            line1: token.card.address_line1,
+            line2: token.card.address_line2,
+            city: token.card.address_city,
+            country: token.card.address_country,
+            postal_code: token.card.address_zip
+          }
         }
+      },
+      {
+        idempotency_key
       }
-    });
+    );
     console.log("Charge: " + { charge });
-    status = "Success";
+    status = "success";
   }
-  catch (err) {
-    console.log("Checkout error: " + err);
-    status = "Failure"
+
+  catch (error) {
+    console.error("Checkout catch: " + error);
+    status = "failure";
   }
 
   res.json({ error, status });
-
-})
+});
 
 const port = process.env.PORT || 5000;
 
