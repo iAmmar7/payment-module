@@ -39,10 +39,11 @@ class Product extends Component {
           <div className="card-header bg-transparent text-white text-center h4 border-white">{product.name}</div>
           <div className="card-body text-white">
             <h5 className="card-title">Price ${product.price}</h5>
-            <p className="card-text">Lorem ipsum dolor, sit amet consectetur adipisicing elit.</p>
+            <p className="card-text">{product.description}</p>
           </div>
-          <div className="card-footer bg-transparent border-white text-center">
+          <div className="card-footer foot bg-transparent border-white text-center">
             <StripeCheckout
+              className="btn-pay"
               stripeKey="pk_test_rfd3VcwMOkTLRKTflveHdIfg00dYj8zDDC"
               token={this.handleToken}
               amount={product.price * 100}

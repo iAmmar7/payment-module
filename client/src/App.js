@@ -2,8 +2,8 @@ import React, { Component } from "react";
 import { toast } from "react-toastify";
 
 import Product from "./Product";
-
 import "./App.css";
+
 import "react-toastify/dist/ReactToastify.css";
 
 toast.configure();
@@ -33,6 +33,11 @@ class App extends Component {
           price: 400.34,
           description: "Sample Product 4"
         },
+        {
+          name: "Product 5",
+          price: 600.34,
+          description: "Sample Product 5"
+        },
       ]
     };
   }
@@ -45,6 +50,7 @@ class App extends Component {
           <Product data={this.state.products[1]} />
           <Product data={this.state.products[2]} />
           <Product data={this.state.products[3]} />
+          <Product data={this.state.products[4]} />
         </div>
       </div>
     )
